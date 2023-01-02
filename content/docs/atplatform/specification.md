@@ -719,7 +719,7 @@ The `notify` verb enables us to notify the atSign user of some data event.
 The following is the regex for the `notify` verb
 
 ```
-notify:((?<operation>update|delete):)?(ttl:(?<ttl>\d+):)?(ttb:(?<ttb>\d+):)?(ttr:(?<ttr>(-)?\d+):)?(ccd:(?<ccd>true|false):)?(@(?<forAtSign>[^@:\s]-)):(?<atKey>[^:]((?!:{2})[^@])+)@(?<atSign>[^@:\s]+)(:(?<value>.+))?
+notify:((?<operation>update|delete):)?(messageType:(?<messageType>key|text):)?(priority:(?<priority>low|medium|high):)?(strategy:(?<strategy>all|latest):)?(latestN:(?<latestN>\d+):)?(notifier:(?<notifier>[^\s:]+):)?(ttln:(?<ttln>\d+):)?(ttl:(?<ttl>\d+):)?(ttb:(?<ttb>\d+):)?(ttr:(?<ttr>(-)?\d+):)?(ccd:(?<ccd>true|false):)?(@(?<forAtSign>[^@:\s]*)):(?<atKey>[^:@]((?!:{2})[^@])+)(@(?<atSign>[^@:\s]+))?(:(?<value>.+))?$
 ```
 
 **Example:**
@@ -727,6 +727,8 @@ notify:((?<operation>update|delete):)?(ttl:(?<ttl>\d+):)?(ttb:(?<ttb>\d+):)?(ttr
 `notify:update:@alice:test@bob`
 
 `notify:delete:@alice:test@bob`
+
+`notify:messageType:text:@bob:my sample message to bob`
 
 **Response:**
 
@@ -779,6 +781,28 @@ The following is the regex
 If successful, returns
 
 `data:success`
+
+#### Notify Status
+
+**Synopsis:**
+
+Notify status returns the status of a notification that was sent to another atSign user.
+
+The following is the regex
+
+`notify:(status:(?<notificationId>[^:]+$))`
+
+**Example::**
+
+`notify:status:0e5e9e89-c9cb-423b-8972-8c5487215990`
+
+**Response:**
+
+Returns the status of the notification
+
+`data:delivered`
+
+`data:undelivered`
 
 ### The `monitor` verb
 
