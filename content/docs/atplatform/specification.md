@@ -199,6 +199,26 @@ A user of the Secondary Server should be able to decide who is allowed to connec
 
 ## Verbs
 
+Verbs are commands you can execute on a secondary server. Each verb interacts with the secondary server in a different way. Some are for authentication, some are for data retrieval and some are for data manipulation. See the table below for more insight on which verb to use for what purpose.
+
+| Verb | Purpose |
+| ---- | ------- |
+| `from` | Authentication |
+| `cram` | Authentication |
+| `pkam` | Authentication |
+| `pol`  | Authentication |
+| `scan` | Data retrieval |
+| `update` | Data manipulation |
+| `update:meta` | Data manipulation |
+| `lookup` | Data retrieval |
+| `plookup` | Data retrieval |
+| `llookup` | Data retrieval |
+| `delete` | Data manipulation |
+| `stats` | Misc |
+| `sync` | Data retrieval/manipulation |
+| `notify` | Notifications |
+| `monitor` | Notifications |
+
 ### The `from` verb
 
 **Synopsis:**
@@ -269,6 +289,38 @@ The `cram` verb follows the `from` verb. As an owner of the Secondary Server, yo
 
 `<digest>` Required: Yes. Description: Encrypted challenge
 
+### The `pkam` verb
+
+**Synopsis:**
+
+The `pkam` verb is used to authenticate one's own self as an owner of a Secondary Server using a PKI style authentication.
+
+Following regex represents the syntax of the `pkam` verb:
+
+`^pkam:(?<signature>.+$)`
+
+**Example:**
+
+`pkam:<digest>`
+
+**Response:**
+
+If the user gets the challenge right, the prompt should change to the atSign of the user.
+
+`<@sign>@`
+
+If the user gets the pkam authentication wrong, then it should respond back with the following error and close the connection to the server.
+
+`error:AT0401-Client authentication failed`
+
+**Description:**
+
+The `pkam` verb follows the `from` verb. As an owner of the Secondary Server, you should be able to take the challenge thrown by the `from` verb and encrypt using the private key of the RSA key pair with what the server has been bound with. Upon receiving the `cram` verb along with the digest, the server decrypts the digest using the public key and matches it with the challenge. If they are the same then the secondary lets you connect to the Secondary Server and changes the prompt to your atSign.
+
+**Options:**
+
+`<digest>` Required: Yes. Description: Encrypted challenge
+
 ### The `pol` verb
 
 **Synopsis**:
@@ -315,7 +367,7 @@ Following regex represents the syntax of the `scan` verb:
 
 `scan:showhidden:true`
 
-`scan: <regex>`
+`scan <regex>`
 
 **Response:**
 
@@ -539,6 +591,8 @@ Following is the regex of the `plookup` verb:
 
 `plookup:all:publickey@alice`
 
+`plookup:bypassCache:true:all:publickey@alice`
+
 **Response:**
 
 The Secondary Server should return the value or metadata or the value and metadata together based on the option specified.
@@ -591,37 +645,21 @@ The `llookup` verb should be used to fetch the value of the key in the owners se
 
 If `phone@bob` is "1234" and `altphone@bob` is "atsign://phone@bob", then `lookup` of `altphone@bob` should return "1234" where as `llookup` of `altphone@bob` should return "atsign://phone@bob".
 
-### The `pkam` verb
+### The `delete` verb
 
 **Synopsis:**
 
-The `pkam` verb is used to authenticate one's own self as an owner of a Secondary Server using a PKI style authentication.
-
-Following regex represents the syntax of the `pkam` verb:
-
-`^pkam:(?<signature>.+$)`
+The `delete` verb should be used to delete a key from the key store. Only the authenticated owner of the secondary server can delete keys that they created.
 
 **Example:**
 
-`pkam:<digest>`
+`delete:phone@bob`
 
 **Response:**
 
-If the user gets the challenge right, the prompt should change to the atSign of the user.
+The Secondary Server returns the commit id of the operation. Note: no information about the key (if it was deleted or if it ever existed in the first place) is given.
 
-`<@sign>@`
-
-If the user gets the pkam authentication wrong, then it should respond back with the following error and close the connection to the server.
-
-`error:AT0401-Client authentication failed`
-
-**Description:**
-
-The `pkam` verb follows the `from` verb. As an owner of the Secondary Server, you should be able to take the challenge thrown by the `from` verb and encrypt using the private key of the RSA key pair with what the server has been bound with. Upon receiving the `cram` verb along with the digest, the server decrypts the digest using the public key and matches it with the challenge. If they are the same then the secondary lets you connect to the Secondary Server and changes the prompt to your atSign.
-
-**Options:**
-
-`<digest>` Required: Yes. Description: Encrypted challenge
+`data:1234`
 
 ### The `stats` verb
 
