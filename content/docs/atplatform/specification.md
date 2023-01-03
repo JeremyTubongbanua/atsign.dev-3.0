@@ -231,6 +231,8 @@ Following regex represents the syntax of the `from` verb:
 
 **Example**:
 
+Telling the secondary server that you are claiming to be `@bob`.
+
 `from:@bob`
 
 **Response**:
@@ -363,11 +365,21 @@ Following regex represents the syntax of the `scan` verb:
 
 **Example:**
 
+View all keys in the secondary server excluding hidden
+
 `scan`
+
+View all keys in the secondary server including hidden
 
 `scan:showhidden:true`
 
+View all keys in the secondary server filtered by a regex
+
 `scan <regex>`
+
+View all keys in the secondary server including hidden and filtered by a regex
+
+`scan:showhidden:true <regex>`
 
 **Response:**
 
@@ -386,9 +398,16 @@ Following regex represents the syntax of the `update` verb:
 
 **Example:**
 
+Put a key/value pair into the secondary server with key `location@bob` and value `bob's location value`.
+This operation will create a new key if it does not already exist. If it already exists, it will overwrite the existing value.
+
 `update:location@bob bob's location value`
 
+Put a key/value pair into the secondary server with key `location@bob` and value `bob's location value but key expires in 10 minutes`. The time to live of this key is 10 minutes.
+
 `update:ttl:600000:location@bob bob's location value but key expires in 10 minutes`
+
+Put a shared key/value pair into the secondary server with key `@alice:phone@bob` (shared with @alice and shared by @bob) with value `bob's phone number shared to @alice`.
 
 `update:@alice:phone@bob bob's phone number shared to @alice`
 
@@ -438,7 +457,11 @@ Following is the regex for the `update:meta` verb
 
 **Example:**
 
+Update the metadata of key `phone@bob` setting `isBinary:true` while keeping all other metadata as it is.
+
 `update:meta:phone@bob:isBinary:true`
+
+Update the metadata of the shared key `@alicephone@bob` (shared with @alice & shared by @bob) setting `ttl:600000`, setting `isBinary:true` and `isEncrypted:true` while keeping all other metadata as it is.
 
 `update:meta:@alice:phone@bob:ttl:600000:isBinary:true:isEncrypted:true`
 
@@ -486,9 +509,15 @@ The following is the regex of the `lookup` verb:
 
 **Example:**
 
+Look up the value of the key `@<you>:phone@alice` (the key is created and shared by @alice and lives on their secondary server where the key is intentionally shared with you). 
+
 `lookup:phone@alice`
 
+Look up the metadata of the key `@<you>:phone@alice` (key shared by @alice and shared with you).
+
 `lookup:meta:phone@alice`
+
+Look up both the value and the metadata of the key `@<you>:phone@alice` (key shared by @alice and shared with you).
 
 `lookup:all:phone@alice`
 
@@ -584,12 +613,20 @@ Following is the regex of the `plookup` verb:
 `^plookup:((?<operation>meta|all):)?(?<atKey>[^@\s]+)@(?<@sign>[^@\s]+)$`
 
 **Example:**
+    
+Look up the value of the key `public:publickey@alice` (the key is created and shared by @alice and lives on their secondary server where the key is public).
 
 `plookup:publickey@alice`
 
+Look up the metadata of the public key
+
 `plookup:meta:publickey@alice`
 
+Look up both the value and the metadata of the public key
+
 `plookup:all:publickey@alice`
+
+Look up the value and metadata of the public key while bypassing the cache (i.e. the value will be fetched directly from the secondary server instead of first checking for a cached key on your secondary).
 
 `plookup:bypassCache:true:all:publickey@alice`
 
@@ -619,9 +656,17 @@ The following is the regex of the `llookup` verb:
 
 **Example:**
 
-`llookup:public:publickey@bob`
+Lookup the value of a public key that lives on your secondary server
 
-`llookup:all:phone@bob`
+`llookup:public:publickey@<you>`
+
+Lookup both the value and the metadata of a self key that lives on your secondary server
+
+`llookup:all:phone@<you>`
+
+Lookup both the value and the metadata of a shared key (that is shared with @alice and created by @<you>)
+
+`llookup:all:@alice:phone@<you>`
 
 **Response:**
 
@@ -653,7 +698,9 @@ The `delete` verb should be used to delete a key from the key store. Only the au
 
 **Example:**
 
-`delete:phone@bob`
+Delete a key (that you created) from your secondary server. 
+
+`delete:phone@<you>`
 
 **Response:**
 
@@ -724,11 +771,17 @@ notify:((?<operation>update|delete):)?(messageType:(?<messageType>key|text):)?(p
 
 **Example:**
 
-`notify:update:@alice:test@bob`
+Notify `@alice` that you have a shared key `@alice:test@<you>` with an updated value waiting for them to lookup.
 
-`notify:delete:@alice:test@bob`
+`notify:update:@alice:test@<you>`
 
-`notify:messageType:text:@bob:my sample message to bob`
+Notify `@alice` that you have a shared key `@alice:test@<you>` that was deleted.
+
+`notify:delete:@alice:test@<you>`
+
+Notify `@alice` with a message `my sample message to bob`.
+
+`notify:messageType:text:@<you>:my sample message to bob`
 
 **Response:**
 
@@ -754,6 +807,8 @@ The following is the regex
 
 **Example:**
 
+List all notifications that you have received.
+
 `notify:list`
 
 **Response:**
@@ -774,6 +829,8 @@ The following is the regex
 
 **Example:**
 
+Remove a notification that you received that has id `0e5e9e89-c9cb-423b-8972-8c5487215990`.
+
 `notify:remove:0e5e9e89-c9cb-423b-8972-8c5487215990`
 
 **Response:**
@@ -793,6 +850,8 @@ The following is the regex
 `notify:(status:(?<notificationId>[^:]+$))`
 
 **Example::**
+
+Check the status of the notification that you sent with id `0e5e9e89-c9cb-423b-8972-8c5487215990`.
 
 `notify:status:0e5e9e89-c9cb-423b-8972-8c5487215990`
 
@@ -815,6 +874,8 @@ The following is the regex
 `^monitor$|^monitor ?(?<regex>.-)?)$`
 
 **Example:**
+
+Start monitoring all notifications in this current session.
 
 `monitor`
 
