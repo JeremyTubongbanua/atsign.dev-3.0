@@ -137,7 +137,7 @@ Metadata of a key should describe the following properties of the value being in
 |----------------|--------------|-------------|
 | createdOn | Yes | Date and time when the key has been created. |
 | createdBy | Yes | atSign that has created the key |
-| updatedOn | Yes | Date and tiem when the key has been last updated |
+| updatedOn | Yes | Date and time when the key has been last updated |
 | sharedWith | No | atSign of the user with whom the key has been shared. Can be null if not shared with anyone. |
 | ttl | No | Time to live in milliseconds. |
 | expiresOn | Yes | A Date and Time derived from the ttl (now + ttl). A Key should be auto deleted once it expires. |
