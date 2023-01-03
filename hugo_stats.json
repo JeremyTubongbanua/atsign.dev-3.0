@@ -58,7 +58,8 @@
       "title",
       "to",
       "tr",
-      "ul"
+      "ul",
+      "you"
     ],
     "classes": [
       "active",
@@ -355,6 +356,7 @@
       "notification",
       "notify-list",
       "notify-remove",
+      "notify-status",
       "notify-verb",
       "notifylist-verb",
       "notifyremove-verb",
