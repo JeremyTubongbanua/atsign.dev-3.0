@@ -239,7 +239,7 @@ Telling the secondary server that you are claiming to be `@bob`.
 
 If the user who is trying to connect is the owner of the Secondary Server, then the `from` verb should respond with the following response.
 
-`key:<sessionId@sign:uuid>`
+`data:<sessionId@sign:uuid>`
 
 If the user who is trying to connect is not the owner of the Secondary Server, then the `from` verb should respond with the following response.
 
